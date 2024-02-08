@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
-get '/' do
-  "Hello World"
+get '/memos' do
+  erb :index
 end
