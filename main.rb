@@ -23,6 +23,14 @@ get '/memos/new' do
 end
 
 post '/memos' do
+  last_memo = memos.last
+  latest_id = last_memo["id"].to_i.succ
+  new_memo = Hash.new([])
+  new_memo["id"] = latest_id.to_s
+  new_memo["title"] = params[:title]
+  new_memo["body"] = params[:body]
+  memos << new_memo
+  File.write 'memos.json', json_data.to_json
   redirect '/memos'
   erb :new
 end
