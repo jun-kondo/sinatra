@@ -1,1 +1,6 @@
 <h1>メモ一覧</h1>
+<% @memos.each do | memo | %>
+  <li>
+    <%= memo["title"] %>
+  </li>
+<% end %>
