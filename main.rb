@@ -34,3 +34,8 @@ post '/memos' do
   redirect '/memos'
   erb :new
 end
+
+get '/memos/:id' do
+  @memo = memos.find {|memo| memo['id'] == params[:id]}
+  erb :show
+end
