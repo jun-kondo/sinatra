@@ -11,7 +11,7 @@ memos = json_data['memos']
 
 helpers do
   def link_to(text, url)
-    "<a href=#{url}>#{text}"
+    "<a href=#{url}>#{text}</a>"
   end
 end
 

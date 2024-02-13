@@ -1,8 +1,9 @@
 <h1>メモ詳細</h1>
 <%= @memo["title"] %>
 <%= @memo["body"] %>
-<%= link_to("編集", "/memos/#{@memo["id"]}/edit") %>
 <form class="button" method="post" action="/memos/<%= @memo['id'] %>">
   <input type="hidden" name="_method" value="DELETE">
   <input type="submit" value="削除">
 </form>
+<%= link_to("メモ一覧", "/memos") %>
+<%= link_to("編集", "/memos/#{@memo["id"]}/edit") %>
