@@ -3,8 +3,9 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
+require 'erb'
+require 'cgi'
 
-enable :method_override
 # hashデータ メソッド化したい
 json_data = JSON.load_file('memos.json')
 memos = json_data['memos']
@@ -29,12 +30,11 @@ post '/memos' do
   latest_id = last_memo['id'].to_i.succ
   new_memo = Hash.new([])
   new_memo['id'] = latest_id.to_s
-  new_memo['title'] = params[:title]
-  new_memo['body'] = params[:body]
+  new_memo['title'] = CGI.escape_html(params[:title])
+  new_memo['body'] = CGI.escape_html(params[:body])
   memos << new_memo
   File.write 'memos.json', json_data.to_json
   redirect '/memos'
-  erb :new
 end
 
 get '/memos/:id' do
@@ -52,11 +52,10 @@ end
 
 patch '/memos/:id' do
   memo = memos.find { |memo| memo['id'] == params[:id] }
-  memo['title'] = params[:title]
-  memo['body'] = params[:body]
+  memo['title'] = CGI.escape_html(params[:title])
+  memo['body'] = CGI.escape_html(params[:body])
   File.write 'memos.json', json_data.to_json
   redirect "/memos/#{memo['id']}"
-  # erb :edit
 end
 
 delete '/memos/:id' do
