@@ -4,6 +4,8 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
 
+enable :method_override
+# hashデータ メソッド化したい
 json_data = JSON.load_file('memos.json')
 memos = json_data['memos']
 
@@ -38,4 +40,27 @@ end
 get '/memos/:id' do
   @memo = memos.find { |memo| memo['id'] == params[:id] }
   erb :show
+end
+
+get '/memos/:id/edit' do
+  memo = memos.find { |memo| memo['id'] == params[:id] }
+  @id = memo['id']
+  @title = memo['title']
+  @body = memo['body']
+  erb :edit
+end
+
+patch '/memos/:id' do
+  memo = memos.find { |memo| memo['id'] == params[:id] }
+  memo['title'] = params[:title]
+  memo['body'] = params[:body]
+  File.write 'memos.json', json_data.to_json
+  redirect "/memos/#{memo['id']}"
+  # erb :edit
+end
+
+delete '/memos/:id' do
+  memos.reject! { |memo| memo['id'] == params[:id] }
+  File.write 'memos.json', json_data.to_json
+  redirect '/memos'
 end
