@@ -28,8 +28,6 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  last_memo = memos.last
-  latest_id = last_memo['id'].to_i.succ
   new_memo = Hash.new([])
   new_memo['id'] = SecureRandom.uuid
   new_memo['title'] = CGI.escape_html(params[:title])
@@ -40,19 +38,16 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  # @memo = memos.find { |m| m['id'] == params[:id] }
   @memo = search_memo(memos)
   erb :show
 end
 
 get '/memos/:id/edit' do
-  # @memo = memos.find { |m| m['id'] == params[:id] }
   @memo = search_memo(memos)
   erb :edit
 end
 
 patch '/memos/:id' do
-  # memo = memos.find { |m| m['id'] == params[:id] }
   memo = search_memo(memos)
   memo['title'] = CGI.escape_html(params[:title])
   memo['body'] = CGI.escape_html(params[:body])
