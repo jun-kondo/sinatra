@@ -5,6 +5,7 @@ require 'sinatra/reloader'
 require 'json'
 require 'erb'
 require 'cgi'
+require 'debug'
 
 # hashデータ メソッド化したい
 json_data = JSON.load_file('memos.json')
@@ -38,20 +39,20 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  @memo = memos.find { |memo| memo['id'] == params[:id] }
+  # @memo = memos.find { |m| m['id'] == params[:id] }
+  @memo = search_memo(memos)
   erb :show
 end
 
 get '/memos/:id/edit' do
-  memo = memos.find { |memo| memo['id'] == params[:id] }
-  @id = memo['id']
-  @title = memo['title']
-  @body = memo['body']
+  # @memo = memos.find { |m| m['id'] == params[:id] }
+  @memo = search_memo(memos)
   erb :edit
 end
 
 patch '/memos/:id' do
-  memo = memos.find { |memo| memo['id'] == params[:id] }
+  # memo = memos.find { |m| m['id'] == params[:id] }
+  memo = search_memo(memos)
   memo['title'] = CGI.escape_html(params[:title])
   memo['body'] = CGI.escape_html(params[:body])
   File.write 'memos.json', json_data.to_json
@@ -62,4 +63,10 @@ delete '/memos/:id' do
   memos.reject! { |memo| memo['id'] == params[:id] }
   File.write 'memos.json', json_data.to_json
   redirect '/memos'
+end
+
+private
+
+def search_memo(memos)
+  memos.find { |m| m['id'] == params[:id] }
 end
