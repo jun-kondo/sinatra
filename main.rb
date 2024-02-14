@@ -34,7 +34,7 @@ post '/memos' do
   new_memo['title'] = CGI.escape_html(params[:title])
   new_memo['body'] = CGI.escape_html(params[:body])
   memos << new_memo
-  File.write 'memos.json', json_data.to_json
+  save(json_data)
   redirect '/memos'
 end
 
@@ -55,13 +55,13 @@ patch '/memos/:id' do
   memo = search_memo(memos)
   memo['title'] = CGI.escape_html(params[:title])
   memo['body'] = CGI.escape_html(params[:body])
-  File.write 'memos.json', json_data.to_json
+  save(json_data)
   redirect "/memos/#{memo['id']}"
 end
 
 delete '/memos/:id' do
   memos.reject! { |memo| memo['id'] == params[:id] }
-  File.write 'memos.json', json_data.to_json
+  save(json_data)
   redirect '/memos'
 end
 
@@ -69,4 +69,8 @@ private
 
 def search_memo(memos)
   memos.find { |m| m['id'] == params[:id] }
+end
+
+def save(json_data)
+  File.write 'memos.json', json_data.to_json
 end
