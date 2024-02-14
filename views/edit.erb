@@ -1,16 +1,16 @@
-<form method="post" action="/memos/<%= @id %>">
+<form method="post" action="/memos/<%= @memo['id'] %>">
   <div class="form-items">
     <label>
-      <input type="text" name="title" value=<%= @title %>>
+      <input type="text" name="title" value=<%= @memo['title'] %>>
       <input type="hidden" name="_method" value="patch">
     </label>
   </div>
   <div class="form-items">
     <label>
-      <textarea name="body"><%= @body %></textarea>
+      <textarea name="body"><%= @memo['body'] %></textarea>
     </label>
   </div>
   <input type="submit" value="更新">
 </form>
 <%= link_to("メモ一覧", "/memos") %>
-<%= link_to("メモ詳細", "/memos/#{@id}") %>
+<%= link_to("メモ詳細", "/memos/#{@memo['id']}") %>
