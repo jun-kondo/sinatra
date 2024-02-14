@@ -68,5 +68,5 @@ def search_memo(memos)
 end
 
 def save(json_data)
-  File.write 'memos.json', json_data.to_json
+  File.write 'memos.json', JSON.pretty_generate(json_data)
 end
