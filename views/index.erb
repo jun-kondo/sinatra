@@ -1,10 +1,11 @@
 <h1>メモ一覧</h1>
 <% if @memos %>
   <% @memos.each do | memo | %>
-    <li>
-      <%#= memo["title"] %>
-      <%= link_to("#{memo["title"]}", "/memos/#{memo["id"]}") %>
-    </li>
+    <ol>
+      <li>
+        <%= link_to("#{memo["title"]}", "/memos/#{memo["id"]}") %>
+      </li>
+    </ol>
   <% end %>
 <% end %>
 <%= link_to("新規作成", "/memos/new") %>
