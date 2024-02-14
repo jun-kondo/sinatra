@@ -6,18 +6,20 @@ require 'json'
 require 'erb'
 require 'cgi'
 require 'securerandom'
-require 'debug'
 
-# hashデータ メソッド化したい
 DB_FILE = 'memo_db.json'
-DATA_FORMAT = { 'memos' => [] }.to_json.freeze
-data = FileTest.exist?(DB_FILE) ? JSON.load_file(DB_FILE) : File.write(DB_FILE, DATA_FORMAT)
+MEMO_DATA = { 'memos' => [] }.to_json.freeze
+data = FileTest.exist?(DB_FILE) ? JSON.load_file(DB_FILE) : File.write(DB_FILE, MEMO_DATA)
 memos = data['memos']
 
 helpers do
   def link_to(text, url)
     "<a href=#{url}>#{text}</a>"
   end
+end
+
+get '/' do
+  redirect 'memos'
 end
 
 get '/memos' do
@@ -30,11 +32,10 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  new_memo = Hash.new([])
-  new_memo['id'] = SecureRandom.uuid
-  new_memo['title'] = CGI.escape_html(params[:title])
-  new_memo['body'] = CGI.escape_html(params[:body])
-  memos << new_memo
+  memo = Hash.new([])
+  memo['id'] = SecureRandom.uuid
+  write_memo(memo, params)
+  memos << memo
   save(data)
   redirect '/memos'
 end
@@ -51,8 +52,7 @@ end
 
 patch '/memos/:id' do
   memo = search_memo(memos)
-  memo['title'] = CGI.escape_html(params[:title])
-  memo['body'] = CGI.escape_html(params[:body])
+  write_memo(memo, params)
   save(data)
   redirect "/memos/#{memo['id']}"
 end
@@ -64,6 +64,11 @@ delete '/memos/:id' do
 end
 
 private
+
+def write_memo(memo, params)
+  memo['title'] = CGI.escape_html(params[:title])
+  memo['body'] = CGI.escape_html(params[:body])
+end
 
 def search_memo(memos)
   memos.find { |m| m['id'] == params[:id] }
