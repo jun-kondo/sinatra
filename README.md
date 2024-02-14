@@ -1,7 +1,7 @@
 # アプリの使用方法
 ## リポジトリをクローン
 ```
-git clone -b add_memo https://github.com/jun-kondo/sinatra.git
+git clone -b add-memo https://github.com/jun-kondo/sinatra.git
 ```
 `cd sinatra`でアプリのディレクトリに移動
 ## アプリの起動に必要なgemをインストール
