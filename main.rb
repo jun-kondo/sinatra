@@ -5,6 +5,7 @@ require 'sinatra/reloader'
 require 'json'
 require 'erb'
 require 'cgi'
+require 'securerandom'
 require 'debug'
 
 # hashデータ メソッド化したい
@@ -30,7 +31,7 @@ post '/memos' do
   last_memo = memos.last
   latest_id = last_memo['id'].to_i.succ
   new_memo = Hash.new([])
-  new_memo['id'] = latest_id.to_s
+  new_memo['id'] = SecureRandom.uuid
   new_memo['title'] = CGI.escape_html(params[:title])
   new_memo['body'] = CGI.escape_html(params[:body])
   memos << new_memo
