@@ -7,9 +7,10 @@ require 'erb'
 require 'cgi'
 require 'securerandom'
 
-DB_FILE = 'memo_db.json'
+DB_FILE = 'json/memo_db.json'
 MEMO_DATA = { 'memos' => [] }.to_json.freeze
-data = FileTest.exist?(DB_FILE) ? JSON.load_file(DB_FILE) : File.write(DB_FILE, MEMO_DATA)
+File.write(DB_FILE, MEMO_DATA) unless FileTest.exist?(DB_FILE)
+data = JSON.load_file(DB_FILE)
 memos = data['memos']
 
 helpers do
