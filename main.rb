@@ -10,8 +10,6 @@ require 'securerandom'
 DB_FILE = 'json/memo_db.json'
 MEMO_DATA = { 'memos' => [] }.to_json.freeze
 File.write(DB_FILE, MEMO_DATA) unless FileTest.exist?(DB_FILE)
-data = JSON.load_file(DB_FILE)
-memos = data['memos']
 
 helpers do
   def link_to(text, url)
@@ -24,7 +22,7 @@ get '/' do
 end
 
 get '/memos' do
-  @memos = memos
+  @memos = JSON.load_file(DB_FILE)['memos']
   erb :index
 end
 
@@ -33,33 +31,38 @@ get '/memos/new' do
 end
 
 post '/memos' do
+  data = JSON.load_file(DB_FILE)
   memo = Hash.new([])
   memo['id'] = SecureRandom.uuid
   write_memo(memo, params)
-  memos << memo
+  data['memos'] << memo
   save(data)
   redirect '/memos'
 end
 
 get '/memos/:id' do
-  @memo = search_memo(memos)
+  data = JSON.load_file(DB_FILE)
+  @memo = search_memo(data)
   erb :show
 end
 
 get '/memos/:id/edit' do
-  @memo = search_memo(memos)
+  data = JSON.load_file(DB_FILE)
+  @memo = search_memo(data)
   erb :edit
 end
 
 patch '/memos/:id' do
-  memo = search_memo(memos)
+  data = JSON.load_file(DB_FILE)
+  memo = search_memo(data)
   write_memo(memo, params)
   save(data)
   redirect "/memos/#{memo['id']}"
 end
 
 delete '/memos/:id' do
-  memos.reject! { |memo| memo['id'] == params[:id] }
+  data = JSON.load_file(DB_FILE)
+  data['memos'].reject! { |memo| memo['id'] == params[:id] }
   save(data)
   redirect '/memos'
 end
@@ -71,8 +74,8 @@ def write_memo(memo, params)
   memo['body'] = CGI.escape_html(params[:body])
 end
 
-def search_memo(memos)
-  memos.find { |m| m['id'] == params[:id] }
+def search_memo(data)
+  data['memos'].find { |m| m['id'] == params[:id] }
 end
 
 def save(data)
