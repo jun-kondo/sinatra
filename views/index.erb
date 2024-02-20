@@ -3,7 +3,7 @@
   <% @memos.each do | memo | %>
     <ul>
       <li>
-        <%= link_to("#{memo["title"]}", "/memos/#{memo["id"]}") %>
+        <%= link_to("#{CGI.escape_html(memo["title"])}", "/memos/#{memo["id"]}") %>
       </li>
     </ul>
   <% end %>

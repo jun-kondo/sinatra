@@ -1,5 +1,5 @@
-<h1><%= @memo["title"] %></h1>
-<p><%= @memo["body"] %></p>
+<h1><%= CGI.escape_html(@memo["title"]) %></h1>
+<p><%= CGI.escape_html(@memo["body"]) %></p>
 <form class="button" method="post" action="/memos/<%= @memo['id'] %>">
   <input type="hidden" name="_method" value="DELETE">
   <input type="submit" value="削除">

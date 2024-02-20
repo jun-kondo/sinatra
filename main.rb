@@ -70,8 +70,8 @@ end
 private
 
 def write_memo(memo, params)
-  memo['title'] = CGI.escape_html(params[:title])
-  memo['body'] = CGI.escape_html(params[:body])
+  memo['title'] = params[:title]
+  memo['body'] = params[:body]
 end
 
 def search_memo(data)
