@@ -13,3 +13,5 @@ gem 'sinatra-contrib'
 gem 'webrick'
 
 gem 'rackup', '~> 2.1'
+
+gem 'pg'
