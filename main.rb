@@ -6,10 +6,13 @@ require 'json'
 require 'erb'
 require 'cgi'
 require 'securerandom'
+require 'pg'
 
-DB_FILE = 'json/memo_db.json'
-MEMO_DATA = { 'memos' => [] }.to_json.freeze
-File.write(DB_FILE, MEMO_DATA) unless FileTest.exist?(DB_FILE)
+PG::Connection.new(dbname: 'memo').exec("CREATE TABLE IF NOT EXISTS memo(
+                                      id CHAR(36) NOT NULL,
+                                      title VARCHAR(20) NOT NULL,
+                                      body VARCHAR(100),
+                                      PRIMARY KEY (id));")
 
 helpers do
   def link_to(text, url)
@@ -22,7 +25,8 @@ get '/' do
 end
 
 get '/memos' do
-  @memos = JSON.load_file(DB_FILE)['memos']
+  conn = PG::Connection.new(dbname: 'memo')
+  @memos = conn.exec('SELECT * FROM memo;').to_a
   erb :index
 end
 
@@ -31,53 +35,32 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  data = JSON.load_file(DB_FILE)
-  memo = Hash.new([])
-  memo['id'] = SecureRandom.uuid
-  write_memo(memo, params)
-  data['memos'] << memo
-  save(data)
+  id = SecureRandom.uuid
+  conn = PG::Connection.new(dbname: 'memo')
+  conn.exec_params('INSERT INTO memo VALUES($1, $2, $3);', [id, params['title'], params['body']])
   redirect '/memos'
 end
 
 get '/memos/:id' do
-  data = JSON.load_file(DB_FILE)
-  @memo = search_memo(data)
+  conn = PG::Connection.new(dbname: 'memo')
+  @memo = conn.exec_params('SELECT * FROM memo WHERE id=$1;', [params['id']]).to_a[0]
   erb :show
 end
 
 get '/memos/:id/edit' do
-  data = JSON.load_file(DB_FILE)
-  @memo = search_memo(data)
+  conn = PG::Connection.new(dbname: 'memo')
+  @memo = conn.exec_params('SELECT * FROM memo WHERE id=$1;', [params['id']]).to_a[0]
   erb :edit
 end
 
 patch '/memos/:id' do
-  data = JSON.load_file(DB_FILE)
-  memo = search_memo(data)
-  write_memo(memo, params)
-  save(data)
-  redirect "/memos/#{memo['id']}"
-end
-
-delete '/memos/:id' do
-  data = JSON.load_file(DB_FILE)
-  data['memos'].reject! { |memo| memo['id'] == params[:id] }
-  save(data)
+  conn = PG::Connection.new(dbname: 'memo')
+  conn.exec_params('UPDATE memo SET title=$1, body=$2 WHERE id=$3;', [params['title'], params['body'], params['id']])
   redirect '/memos'
 end
 
-private
-
-def write_memo(memo, params)
-  memo['title'] = params[:title]
-  memo['body'] = params[:body]
-end
-
-def search_memo(data)
-  data['memos'].find { |m| m['id'] == params[:id] }
-end
-
-def save(data)
-  File.write(DB_FILE, JSON.pretty_generate(data))
+delete '/memos/:id' do
+  conn = PG::Connection.new(dbname: 'memo')
+  conn.exec_params('DELETE FROM memo WHERE id=$1;', [params['id']])
+  redirect '/memos'
 end
