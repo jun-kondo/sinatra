@@ -1,0 +1,8 @@
+<h1><%= CGI.escape_html(@memo["title"]) %></h1>
+<p><%= CGI.escape_html(@memo["body"]) %></p>
+<form class="button" method="post" action="/memos/<%= @memo['id'] %>">
+  <input type="hidden" name="_method" value="DELETE">
+  <input type="submit" value="削除">
+</form>
+<%= link_to("メモ一覧", "/memos") %><br>
+<%= link_to("編集", "/memos/#{@memo["id"]}/edit") %>

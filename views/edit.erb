@@ -1,0 +1,18 @@
+<div class="container">
+  <form method="post" action="/memos/<%= @memo['id'] %>">
+    <div class="form-items">
+      <label>タイトル
+        <input type="text" name="title" value="<%= CGI.escape_html(@memo['title']) %>">
+        <input type="hidden" name="_method" value="patch">
+      </label>
+    </div>
+    <div class="form-items">
+      <label>本文
+        <textarea name="body"><%= CGI.escape_html(@memo['body']) %></textarea>
+      </label>
+    </div>
+    <input type="submit" value="更新">
+  </form>
+</div>
+<%= link_to("メモ一覧", "/memos") %><br>
+<%= link_to("メモ詳細", "/memos/#{@memo['id']}") %>

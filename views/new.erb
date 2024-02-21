@@ -1,0 +1,18 @@
+<div class="container">
+  <form method="post" action="/memos">
+    <div class="form-items">
+      <label>タイトル
+        <input type="text" name="title">
+      </label>
+    </div>
+    <div class="form-items">
+      <label>本文
+        <textarea name="body"></textarea>
+      </label>
+    </div>
+    <div class="form-action">
+      <input type="submit" value="保存">
+    </div>
+  </form>
+</div>
+<%= link_to("メモ一覧", "/memos") %>

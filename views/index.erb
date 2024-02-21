@@ -1,0 +1,11 @@
+<h1>メモ一覧</h1>
+<% if @memos %>
+  <% @memos.each do | memo | %>
+    <ul>
+      <li>
+        <%= link_to("#{CGI.escape_html(memo["title"])}", "/memos/#{memo["id"]}") %>
+      </li>
+    </ul>
+  <% end %>
+<% end %>
+<%= link_to("新規作成", "/memos/new") %>
