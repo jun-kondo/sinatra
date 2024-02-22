@@ -50,14 +50,14 @@ end
 
 get '/memos/:id' do
   conn = PG::Connection.new(dbname: DB_NAME)
-  @memo = conn.exec_params("SELECT * FROM #{TABLE_NAME} WHERE id = $1;", [params['id']]).to_a[0]
+  @memo = conn.exec_params("SELECT * FROM #{TABLE_NAME} WHERE id = $1;", [params['id']]).first
   conn.close
   erb :show
 end
 
 get '/memos/:id/edit' do
   conn = PG::Connection.new(dbname: DB_NAME)
-  @memo = conn.exec_params("SELECT * FROM #{TABLE_NAME} WHERE id = $1;", [params['id']]).to_a[0]
+  @memo = conn.exec_params("SELECT * FROM #{TABLE_NAME} WHERE id = $1;", [params['id']]).first
   conn.close
   erb :edit
 end
