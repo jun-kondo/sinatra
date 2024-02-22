@@ -74,9 +74,3 @@ delete '/memos/:id' do
   conn.close
   redirect '/memos'
 end
-
-private
-
-def connect_db
-  PG::Connection.new(dbname: DB_NAME)
-end
