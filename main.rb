@@ -15,6 +15,7 @@ conn.exec("CREATE TABLE IF NOT EXISTS memo(
             id CHAR(36) NOT NULL,
             title VARCHAR(100) NOT NULL,
             body VARCHAR(1000),
+            created_at TIMESTAMP,
             PRIMARY KEY (id));")
 conn.close
 
@@ -30,7 +31,7 @@ end
 
 get '/memos' do
   conn = PG::Connection.new(dbname: DB_NAME)
-  @memos = conn.exec("SELECT * FROM #{TABLE_NAME};").to_a
+  @memos = conn.exec("SELECT * FROM #{TABLE_NAME} ORDER BY created_at;")
   conn.close
   erb :index
 end
@@ -42,7 +43,7 @@ end
 post '/memos' do
   id = SecureRandom.uuid
   conn = PG::Connection.new(dbname: DB_NAME)
-  conn.exec_params("INSERT INTO #{TABLE_NAME} VALUES($1, $2, $3);", [id, params['title'], params['body']])
+  conn.exec_params("INSERT INTO #{TABLE_NAME} VALUES($1, $2, $3, current_timestamp);", [id, params['title'], params['body']])
   conn.close
   redirect '/memos'
 end
